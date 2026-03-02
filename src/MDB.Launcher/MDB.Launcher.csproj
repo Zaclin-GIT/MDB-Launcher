@@ -14,6 +14,13 @@
     <Authors>MDB Framework</Authors>
     <Description>MDB Framework Mod Manager and Launcher</Description>
     <ApplicationIcon>Assets\mdb_full_icon.ico</ApplicationIcon>
+
+    <!-- Publish as single-file, self-contained exe -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
   </PropertyGroup>
 
   <ItemGroup>
