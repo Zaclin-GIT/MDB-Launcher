@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PlatformTarget>x64</PlatformTarget>
+    <AssemblyName>MDB.Launcher</AssemblyName>
+    <RootNamespace>MDB.Launcher</RootNamespace>
+    <Version>1.0.0</Version>
+    <Authors>MDB Framework</Authors>
+    <Description>MDB Framework Mod Manager and Launcher</Description>
+    <ApplicationIcon>Assets\mdb_full_icon.ico</ApplicationIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="System.Reflection.MetadataLoadContext" Version="9.0.2" />
+    <PackageReference Include="Octokit" Version="13.0.1" />
+    <PackageReference Include="SharpCompress" Version="0.38.0" />
+    <PackageReference Include="System.Text.Json" Version="9.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\mdb_logo.png" />
+    <Resource Include="Assets\mdb_full_icon.ico" />
+  </ItemGroup>
+
+</Project>

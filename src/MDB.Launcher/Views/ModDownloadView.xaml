@@ -1,0 +1,197 @@
+<UserControl x:Class="MDB.Launcher.Views.ModDownloadView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:MDB.Launcher.ViewModels"
+             xmlns:conv="clr-namespace:MDB.Launcher.Converters"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:ModDownloadViewModel}"
+             d:DesignWidth="800" d:DesignHeight="600">
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
+        <conv:InverseBoolToVisibilityConverter x:Key="InvBoolToVis" />
+        <conv:StringToVisibilityConverter x:Key="StringToVis" />
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="32,24">
+
+            <!-- Header -->
+            <TextBlock Style="{StaticResource H1}" Text="Download Mods" Margin="0,0,0,8" />
+            <TextBlock Style="{StaticResource Body}"
+                       Text="Install mods from GitHub repositories. Paste a repo URL below to browse available releases."
+                       Margin="0,0,0,24" />
+
+            <!-- No Profile Warning -->
+            <Border Style="{StaticResource MdbCard}" Margin="0,0,0,16"
+                    Visibility="{Binding HasProfile, Converter={StaticResource InvBoolToVis}}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="⚠" FontSize="18" Foreground="{StaticResource StatusWarningBrush}"
+                               VerticalAlignment="Center" Margin="0,0,12,0" />
+                    <TextBlock Style="{StaticResource Body}"
+                               Text="Select a game profile on the Home page before downloading mods."
+                               Foreground="{StaticResource StatusWarningBrush}" />
+                </StackPanel>
+            </Border>
+
+            <!-- ═══ Search ═══ -->
+            <Border Style="{StaticResource MdbCard}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource H2}" Text="GitHub Repository" Margin="0,0,0,12" />
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBox Grid.Column="0"
+                                 Style="{StaticResource MdbTextBox}"
+                                 Text="{Binding RepoUrl, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,8,0">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Return" Command="{Binding SearchReleasesCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+
+                        <Button Grid.Column="1"
+                                Style="{StaticResource MdbPrimaryButton}"
+                                Content="Search"
+                                Command="{Binding SearchReleasesCommand}"
+                                IsEnabled="{Binding IsSearching, Converter={conv:InverseBoolConverter}}"
+                                Padding="20,10" />
+                    </Grid>
+
+                    <TextBlock Style="{StaticResource Caption}"
+                               Text="Example: https://github.com/owner/mod-repo"
+                               Margin="0,6,0,0" />
+
+                    <!-- Search Error -->
+                    <TextBlock Style="{StaticResource Body}"
+                               Text="{Binding SearchError}"
+                               Foreground="{StaticResource StatusErrorBrush}"
+                               Margin="0,8,0,0"
+                               Visibility="{Binding SearchError, Converter={StaticResource StringToVis}}" />
+
+                    <!-- Loading -->
+                    <ProgressBar Style="{StaticResource MdbProgressBar}"
+                                 IsIndeterminate="True"
+                                 Visibility="{Binding IsSearching, Converter={StaticResource BoolToVis}}"
+                                 Margin="0,8,0,0" />
+                </StackPanel>
+            </Border>
+
+            <!-- ═══ Download Progress ═══ -->
+            <Border Style="{StaticResource MdbCard}" Margin="0,0,0,16"
+                    Visibility="{Binding IsDownloading, Converter={StaticResource BoolToVis}}">
+                <StackPanel>
+                    <TextBlock Style="{StaticResource H3}" Text="Downloading..." Margin="0,0,0,8" />
+                    <ProgressBar Style="{StaticResource MdbProgressBar}"
+                                 Value="{Binding DownloadProgress}"
+                                 Maximum="1.0"
+                                 Height="6" />
+                    <TextBlock Style="{StaticResource Caption}"
+                               Text="{Binding DownloadProgress, StringFormat='{}{0:P0}'}"
+                               Margin="0,4,0,0"
+                               HorizontalAlignment="Center" />
+                </StackPanel>
+            </Border>
+
+            <!-- ═══ Releases ═══ -->
+            <ItemsControl ItemsSource="{Binding Releases}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Style="{StaticResource MdbCard}" Margin="0,0,0,12">
+                            <StackPanel>
+                                <!-- Release Header -->
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                                    <TextBlock Style="{StaticResource H3}"
+                                               Text="{Binding ReleaseName}" />
+                                    <Border Background="{StaticResource MdbPurpleBrush}"
+                                            CornerRadius="4"
+                                            Padding="8,2"
+                                            Margin="12,0,0,0"
+                                            VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding TagName}"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="White" />
+                                    </Border>
+                                    <Border Background="{StaticResource StatusWarningBrush}"
+                                            CornerRadius="4"
+                                            Padding="8,2"
+                                            Margin="8,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Visibility="{Binding IsPreRelease, Converter={StaticResource BoolToVis}}">
+                                        <TextBlock Text="Pre-release"
+                                                   FontSize="11"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="White" />
+                                    </Border>
+                                </StackPanel>
+
+                                <!-- Published Date -->
+                                <TextBlock Style="{StaticResource Caption}"
+                                           Text="{Binding PublishedAt, StringFormat='Published {0:MMM d, yyyy}'}"
+                                           Margin="0,0,0,8" />
+
+                                <!-- Release Body -->
+                                <TextBlock Style="{StaticResource Body}"
+                                           Text="{Binding Body}"
+                                           MaxHeight="60"
+                                           TextTrimming="CharacterEllipsis"
+                                           Margin="0,0,0,12"
+                                           Visibility="{Binding Body, Converter={StaticResource StringToVis}}" />
+
+                                <!-- Assets -->
+                                <TextBlock Style="{StaticResource Caption}" Text="AVAILABLE DOWNLOADS"
+                                           Margin="0,0,0,6" />
+
+                                <ItemsControl ItemsSource="{Binding Assets}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{StaticResource BgDarkBrush}"
+                                                    CornerRadius="{StaticResource RadiusSmall}"
+                                                    Padding="12,8"
+                                                    Margin="0,0,0,4">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding FileName}"
+                                                                   FontFamily="{StaticResource FontMono}"
+                                                                   FontSize="12"
+                                                                   Foreground="{StaticResource TextPrimaryBrush}" />
+                                                        <TextBlock Style="{StaticResource Caption}"
+                                                                   Margin="0,2,0,0">
+                                                            <Run Text="{Binding SizeFormatted, Mode=OneWay}" />
+                                                            <Run Text=" · " />
+                                                            <Run Text="{Binding DownloadCount, StringFormat='{}{0} downloads', Mode=OneWay}" />
+                                                        </TextBlock>
+                                                    </StackPanel>
+
+                                                    <Button Grid.Column="2"
+                                                            Style="{StaticResource MdbPrimaryButton}"
+                                                            Content="Install"
+                                                            Command="{Binding DataContext.DownloadAssetCommand,
+                                                                     RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}"
+                                                            Padding="16,6" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <AssemblyName>MDB.Facade</AssemblyName>
+    <RootNamespace>GameSDK.ModHost</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <Description>Facade assembly containing MDB mod attribute stubs for MetadataLoadContext resolution</Description>
+  </PropertyGroup>
+
+</Project>
